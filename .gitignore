@@ -1,4 +1,11 @@
 /.quarto/
 _book/
 /*_files/
+/site_libs/
 .DS_Store
+# LaTeX intermediates
+*.aux
+*.log
+*.toc
+*.tex
+/*.pdf
