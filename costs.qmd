@@ -1,0 +1,485 @@
+# Step by Step: Short-Run and Long-Run Cost Functions
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+AZUL, ROJO, GRIS = "#1a5276", "#c0392b", "#555555"
+CUADRADO, ANCHO = (5.6, 5.6), (7.2, 4.4)
+
+plt.rcParams.update({
+    "font.size": 13,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.linewidth": 1.1,
+    "lines.linewidth": 2.4,
+    "legend.frameon": False,
+    "mathtext.fontset": "cm",
+})
+
+def ejes(ax, xlabel, ylabel, xmax, ymax, xticks, yticks):
+    ax.set_xlim(0, xmax)
+    ax.set_ylim(0, ymax)
+    ax.set_xticks(xticks)
+    ax.set_yticks(yticks)
+    ax.set_xlabel(xlabel, loc="right")
+    ax.set_ylabel(ylabel, loc="top", rotation=0)
+
+def ejes_LK(ax, lim, paso):
+    # same scale for L and K
+    marcas = list(range(0, lim + 1, paso))
+    ejes(ax, r"$L$", r"$K$", lim, lim, marcas, marcas)
+    ax.set_aspect("equal")
+
+def punto(ax, x, y):
+    ax.plot([x, x], [0, y], color=GRIS, lw=1, ls=":")
+    ax.plot([0, x], [y, y], color=GRIS, lw=1, ls=":")
+    ax.plot(x, y, "o", color="black", ms=8, zorder=5, clip_on=False)
+```
+
+## Setup
+
+A firm produces $q$ units of output using labor, $L$, and capital, $K$:
+
+$$q = f(L, K)$$
+
+The price of labor is $w$ and the price of capital is $r$:
+
+$$w = 4 \qquad\qquad r = 1$$
+
+The cost of producing with $(L, K)$ is:
+
+$$TC = wL + rK$$
+
+In the long run ($lr$) the firm chooses both $L$ and $K$. In the short run ($sr$) capital is fixed at $\bar K$ and the firm chooses only $L$:
+
+$$\bar K = 8$$
+
+Three technologies:
+
+$$q = L^{1/3}K^{2/3} \qquad\quad q = \tfrac13 L + \tfrac23 K \qquad\quad q = \min\left\{\tfrac13 L,\ \tfrac23 K\right\}$$
+
+## Cobb-Douglas: $q = L^{1/3}K^{2/3}$
+
+### Short run: conditional labor demand
+
+With $\bar K = 8$:
+
+$$\bar K^{2/3} = 8^{2/3} = 4$$
+
+Substituting into the production function:
+
+$$q = L^{1/3}\,\bar K^{2/3} = 4\,L^{1/3}$$
+
+Solving for $L$:
+
+$$L^{1/3} = \frac{q}{4} \;\;\Longrightarrow\;\; L(q) = \frac{q^3}{64}$$
+
+### Short run: cost function
+
+$$TC_{sr}(q) = w\,L(q) + r\,\bar K = 4\cdot\frac{q^3}{64} + 1\cdot 8$$
+
+Simplifying:
+
+$$TC_{sr}(q) = \underbrace{\frac{q^3}{16}}_{VC}\; +\; \underbrace{8}_{FC}$$
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=ANCHO)
+q = np.linspace(0, 8, 400)
+ax.plot(q, q**3 / 16 + 8, color=AZUL)
+ax.plot([0, 8], [8, 8], color=GRIS, lw=1.2, ls="--")
+ax.text(6.3, 33, r"$TC_{sr} = \frac{q^3}{16} + 8$", color=AZUL, ha="right")
+ax.text(6.6, 4.6, r"$FC = 8$", color=GRIS)
+ejes(ax, r"$q$", r"$TC$", 8, 40, [0, 2, 4, 6, 8], [0, 8, 16, 24, 32, 40])
+plt.show()
+```
+
+### Short run: marginal cost and average cost
+
+Differentiating $TC_{sr}$:
+
+$$MC_{sr}(q) = \frac{dTC_{sr}}{dq} = \frac{3q^2}{16}$$
+
+Dividing $TC_{sr}$ by $q$:
+
+$$ATC_{sr}(q) = \frac{TC_{sr}}{q} = \frac{q^2}{16} + \frac{8}{q}$$
+
+Minimum of $ATC_{sr}$:
+
+$$\frac{dATC_{sr}}{dq} = \frac{q}{8} - \frac{8}{q^2} = 0 \;\;\Longrightarrow\;\; q^3 = 64 \;\;\Longrightarrow\;\; q = 4$$
+
+Evaluating at $q = 4$:
+
+$$ATC_{sr}(4) = 1 + 2 = 3 \qquad\qquad MC_{sr}(4) = \frac{3\cdot 16}{16} = 3$$
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=ANCHO)
+q = np.linspace(0.3, 8, 400)
+ax.plot(q, 3 * q**2 / 16, color=ROJO)
+ax.plot(q, q**2 / 16 + 8 / q, color=AZUL)
+punto(ax, 4, 3)
+ax.text(7.0, 10.6, r"$MC_{sr} = \frac{3q^2}{16}$", color=ROJO, ha="right")
+ax.text(5.4, 1.5, r"$ATC_{sr} = \frac{q^2}{16} + \frac{8}{q}$", color=AZUL)
+ejes(ax, r"$q$", "", 8, 12, [0, 2, 4, 6, 8], [0, 3, 6, 9, 12])
+plt.show()
+```
+
+### Long run: tangency condition
+
+Marginal products:
+
+$$MP_L = \tfrac13 L^{-2/3}K^{2/3} \qquad\qquad MP_K = \tfrac23 L^{1/3}K^{-1/3}$$
+
+Dividing:
+
+$$MRTS = \frac{MP_L}{MP_K} = \frac{K}{2L}$$
+
+Setting it equal to $w/r$:
+
+$$\frac{K}{2L} = \frac{4}{1} \;\;\Longrightarrow\;\; K = 8L$$
+
+### Long run: conditional factor demands
+
+Substituting $K = 8L$ into the production function:
+
+$$q = L^{1/3}(8L)^{2/3} = 4L$$
+
+Solving:
+
+$$L(q) = \frac{q}{4} \qquad\qquad K(q) = 8\,L(q) = 2q$$
+
+### Long run: cost function
+
+$$TC_{lr}(q) = w\,L(q) + r\,K(q) = 4\cdot\frac{q}{4} + 1\cdot 2q$$
+
+Simplifying:
+
+$$TC_{lr}(q) = 3q$$
+
+Marginal cost and average cost:
+
+$$MC_{lr}(q) = 3 \qquad\qquad ATC_{lr}(q) = 3$$
+
+### Isoquant and tangent isocost
+
+For $q = 4$:
+
+$$L(4) = 1 \qquad K(4) = 8 \qquad TC_{lr}(4) = 12$$
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=CUADRADO)
+L = np.linspace(0.25, 14, 500)
+ax.plot(L, 8 / np.sqrt(L), color=AZUL)
+ax.plot([0, 3], [12, 0], color=ROJO)
+punto(ax, 1, 8)
+ax.text(6.2, 3.9, "isoquant\n" r"$L^{1/3}K^{2/3} = 4$", color=AZUL, va="bottom")
+ax.text(3.0, 0.5, "isocost\n" r"$4L + K = 12$", color=ROJO, va="bottom")
+ax.text(1.4, 8.2, r"$(1,\,8)$")
+ejes_LK(ax, 14, 2)
+plt.show()
+```
+
+### Short-run and long-run cost functions
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=ANCHO)
+q = np.linspace(0, 8, 400)
+ax.plot(q, q**3 / 16 + 8, color=AZUL)
+ax.plot(q, 3 * q, color=ROJO)
+punto(ax, 4, 12)
+ax.text(6.3, 33, r"$TC_{sr} = \frac{q^3}{16} + 8$", color=AZUL, ha="right")
+ax.text(6.5, 14.5, r"$TC_{lr} = 3q$", color=ROJO)
+ejes(ax, r"$q$", r"$TC$", 8, 40, [0, 2, 4, 6, 8], [0, 8, 12, 24, 32, 40])
+plt.show()
+```
+
+### Returns to scale
+
+$$f(tL,\,tK) = (tL)^{1/3}(tK)^{2/3} = t^{1/3+2/3}\,L^{1/3}K^{2/3}$$
+
+Therefore:
+
+$$f(tL,\,tK) = t\,f(L,K)$$
+
+The technology exhibits constant returns to scale.
+
+## Perfect substitutes: $q = \tfrac13 L + \tfrac23 K$
+
+### Short run: conditional labor demand
+
+With $\bar K = 8$:
+
+$$q = \tfrac13 L + \tfrac23 \bar K = \tfrac13 L + \tfrac{16}{3}$$
+
+Solving for $L$:
+
+$$L(q) = \begin{cases} 0 & q \le \tfrac{16}{3} \\[4pt] 3q - 16 & q > \tfrac{16}{3} \end{cases}$$
+
+### Short run: cost function
+
+$$TC_{sr}(q) = w\,L(q) + r\,\bar K = 4\,L(q) + 1\cdot 8$$
+
+Substituting $L(q)$:
+
+$$TC_{sr}(q) = \begin{cases} 8 & q \le \tfrac{16}{3} \\[4pt] 12q - 56 & q > \tfrac{16}{3} \end{cases}$$
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=ANCHO)
+ax.plot([0, 16 / 3, 8], [8, 8, 40], color=AZUL)
+ax.plot([0, 8], [8, 8], color=GRIS, lw=1.2, ls="--")
+ax.text(6.9, 30, r"$TC_{sr}$", color=AZUL, ha="right")
+ax.text(6.6, 4.6, r"$FC = 8$", color=GRIS)
+ejes(ax, r"$q$", r"$TC$", 8, 40, [0, 2, 4, 16 / 3, 8], [0, 8, 16, 24, 32, 40])
+ax.set_xticklabels(["0", "2", "4", r"$\frac{16}{3}$", "8"])
+plt.show()
+```
+
+### Short run: marginal cost and average cost
+
+Differentiating $TC_{sr}$:
+
+$$MC_{sr}(q) = \begin{cases} 0 & q < \tfrac{16}{3} \\[4pt] 12 & q > \tfrac{16}{3} \end{cases}$$
+
+Dividing $TC_{sr}$ by $q$:
+
+$$ATC_{sr}(q) = \begin{cases} \dfrac{8}{q} & q \le \tfrac{16}{3} \\[8pt] 12 - \dfrac{56}{q} & q > \tfrac{16}{3} \end{cases}$$
+
+Minimum of $ATC_{sr}$, at $q = \tfrac{16}{3}$:
+
+$$ATC_{sr}\left(\tfrac{16}{3}\right) = \frac{8}{16/3} = \frac32$$
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=ANCHO)
+q1 = np.linspace(0.5, 16 / 3, 200)
+q2 = np.linspace(16 / 3, 8, 200)
+ax.plot([0, 16 / 3], [0, 0], color=ROJO, clip_on=False, zorder=4)
+ax.plot([16 / 3, 8], [12, 12], color=ROJO)
+ax.plot(q1, 8 / q1, color=AZUL)
+ax.plot(q2, 12 - 56 / q2, color=AZUL)
+punto(ax, 16 / 3, 1.5)
+ax.text(7.9, 12.5, r"$MC_{sr} = 12$", color=ROJO, ha="right")
+ax.text(2.2, 0.5, r"$MC_{sr} = 0$", color=ROJO)
+ax.text(1.6, 6.2, r"$ATC_{sr}$", color=AZUL)
+ejes(ax, r"$q$", "", 8, 14, [0, 2, 4, 16 / 3, 8], [0, 1.5, 6, 12])
+ax.set_xticklabels(["0", "2", "4", r"$\frac{16}{3}$", "8"])
+ax.set_yticklabels(["0", r"$\frac{3}{2}$", "6", "12"])
+plt.show()
+```
+
+### Long run: comparing $MRTS$ and $w/r$
+
+Marginal products:
+
+$$MP_L = \tfrac13 \qquad\qquad MP_K = \tfrac23$$
+
+Dividing:
+
+$$MRTS = \frac{1/3}{2/3} = \frac12 \qquad\qquad \frac{w}{r} = 4$$
+
+Comparing:
+
+$$MRTS < \frac{w}{r} \;\;\Longrightarrow\;\; L = 0$$
+
+### Long run: conditional factor demands
+
+Substituting $L = 0$ into the production function:
+
+$$q = \tfrac23 K$$
+
+Solving:
+
+$$L(q) = 0 \qquad\qquad K(q) = \tfrac32 q$$
+
+### Long run: cost function
+
+$$TC_{lr}(q) = w\,L(q) + r\,K(q) = 4\cdot 0 + 1\cdot\tfrac32 q$$
+
+Simplifying:
+
+$$TC_{lr}(q) = \tfrac32 q$$
+
+Marginal cost and average cost:
+
+$$MC_{lr}(q) = \tfrac32 \qquad\qquad ATC_{lr}(q) = \tfrac32$$
+
+### Isoquant and isocost
+
+For $q = 4$:
+
+$$L(4) = 0 \qquad K(4) = 6 \qquad TC_{lr}(4) = 6$$
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=CUADRADO)
+ax.plot([0, 12], [6, 0], color=AZUL)
+ax.plot([0, 1.5], [6, 0], color=ROJO)
+punto(ax, 0, 6)
+ax.text(6.0, 3.5, "isoquant\n" r"$\frac{1}{3}L + \frac{2}{3}K = 4$", color=AZUL, va="bottom")
+ax.text(1.6, 0.5, "isocost\n" r"$4L + K = 6$", color=ROJO, va="bottom")
+ax.text(0.5, 6.5, r"$(0,\,6)$")
+ejes_LK(ax, 14, 2)
+plt.show()
+```
+
+### Short-run and long-run cost functions
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=ANCHO)
+ax.plot([0, 8], [0, 12], color=ROJO)
+ax.plot([0, 16 / 3, 8], [8, 8, 40], color=AZUL)
+punto(ax, 16 / 3, 8)
+ax.text(6.9, 30, r"$TC_{sr}$", color=AZUL, ha="right")
+ax.text(6.3, 5.2, r"$TC_{lr} = \frac{3}{2}q$", color=ROJO)
+ejes(ax, r"$q$", r"$TC$", 8, 40, [0, 2, 4, 16 / 3, 8], [0, 8, 16, 24, 32, 40])
+ax.set_xticklabels(["0", "2", "4", r"$\frac{16}{3}$", "8"])
+plt.show()
+```
+
+### Returns to scale
+
+$$f(tL,\,tK) = \tfrac13 (tL) + \tfrac23 (tK) = t\left(\tfrac13 L + \tfrac23 K\right)$$
+
+Therefore:
+
+$$f(tL,\,tK) = t\,f(L,K)$$
+
+The technology exhibits constant returns to scale.
+
+## Perfect complements: $q = \min\left\{\tfrac13 L,\ \tfrac23 K\right\}$
+
+### Short run: conditional labor demand
+
+With $\bar K = 8$:
+
+$$q = \min\left\{\tfrac13 L,\ \tfrac23 \bar K\right\} = \min\left\{\tfrac13 L,\ \tfrac{16}{3}\right\} \;\;\Longrightarrow\;\; q \le \tfrac{16}{3}$$
+
+Solving for $L$:
+
+$$L(q) = 3q \qquad \left(q \le \tfrac{16}{3}\right)$$
+
+### Short run: cost function
+
+$$TC_{sr}(q) = w\,L(q) + r\,\bar K = 4\cdot 3q + 1\cdot 8$$
+
+Simplifying:
+
+$$TC_{sr}(q) = \underbrace{12q}_{VC}\; +\; \underbrace{8}_{FC} \qquad \left(q \le \tfrac{16}{3}\right)$$
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=ANCHO)
+ax.plot([0, 16 / 3, 16 / 3], [8, 72, 108], color=AZUL)
+ax.plot([0, 8], [8, 8], color=GRIS, lw=1.2, ls="--")
+punto(ax, 16 / 3, 72)
+ax.text(0.3, 60, r"$TC_{sr} = 12q + 8$", color=AZUL)
+ax.text(6.6, 12, r"$FC = 8$", color=GRIS)
+ejes(ax, r"$q$", r"$TC$", 8, 108, [0, 2, 4, 16 / 3, 8], [0, 8, 36, 72, 108])
+ax.set_xticklabels(["0", "2", "4", r"$\frac{16}{3}$", "8"])
+plt.show()
+```
+
+### Short run: marginal cost and average cost
+
+Differentiating $TC_{sr}$:
+
+$$MC_{sr}(q) = 12 \qquad \left(q \le \tfrac{16}{3}\right)$$
+
+Dividing $TC_{sr}$ by $q$:
+
+$$ATC_{sr}(q) = 12 + \frac{8}{q} \qquad \left(q \le \tfrac{16}{3}\right)$$
+
+Minimum of $ATC_{sr}$, at $q = \tfrac{16}{3}$:
+
+$$ATC_{sr}\left(\tfrac{16}{3}\right) = 12 + \frac{8}{16/3} = \frac{27}{2}$$
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=ANCHO)
+q = np.linspace(0.5, 16 / 3, 300)
+ax.plot([0, 16 / 3], [12, 12], color=ROJO)
+ax.plot(q, 12 + 8 / q, color=AZUL)
+punto(ax, 16 / 3, 13.5)
+ax.plot(16 / 3, 12, "o", color=ROJO, ms=7, zorder=5)
+ax.text(2.2, 9.6, r"$MC_{sr} = 12$", color=ROJO)
+ax.text(1.5, 19.5, r"$ATC_{sr} = 12 + \frac{8}{q}$", color=AZUL)
+ejes(ax, r"$q$", "", 8, 24, [0, 2, 4, 16 / 3, 8], [0, 6, 12, 13.5, 18, 24])
+ax.set_xticklabels(["0", "2", "4", r"$\frac{16}{3}$", "8"])
+ax.set_yticklabels(["0", "6", "12", "", "18", "24"])
+ax.text(5.5, 14.2, r"$\frac{27}{2}$")
+plt.show()
+```
+
+### Long run: conditional factor demands
+
+Wasting neither input:
+
+$$\tfrac13 L = \tfrac23 K = q$$
+
+Solving:
+
+$$L(q) = 3q \qquad\qquad K(q) = \tfrac32 q$$
+
+### Long run: cost function
+
+$$TC_{lr}(q) = w\,L(q) + r\,K(q) = 4\cdot 3q + 1\cdot \tfrac32 q$$
+
+Simplifying:
+
+$$TC_{lr}(q) = \tfrac{27}{2}\, q$$
+
+Marginal cost and average cost:
+
+$$MC_{lr}(q) = \tfrac{27}{2} \qquad\qquad ATC_{lr}(q) = \tfrac{27}{2}$$
+
+### Isoquant and isocost
+
+For $q = 2$:
+
+$$L(2) = 6 \qquad K(2) = 3 \qquad TC_{lr}(2) = 27$$
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=CUADRADO)
+ax.plot([6, 6, 12], [12, 3, 3], color=AZUL)
+ax.plot([3.75, 6.75], [12, 0], color=ROJO)
+ax.plot([0, 12], [0, 6], color=GRIS, lw=1, ls="--")
+punto(ax, 6, 3)
+ax.text(6.4, 9.6, "isoquant\n" r"$\min\{\frac{1}{3}L,\ \frac{2}{3}K\} = 2$", color=AZUL, va="bottom")
+ax.text(3.6, 8.6, "isocost\n" r"$4L + K = 27$", color=ROJO, ha="right", va="bottom")
+ax.text(6.9, 1.6, r"$(6,\,3)$")
+ax.text(9.0, 6.4, r"$K = \frac{1}{2}L$", color=GRIS)
+ejes_LK(ax, 12, 3)
+plt.show()
+```
+
+### Short-run and long-run cost functions
+
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=ANCHO)
+ax.plot([0, 8], [0, 108], color=ROJO)
+ax.plot([0, 16 / 3, 16 / 3], [8, 72, 108], color=AZUL)
+punto(ax, 16 / 3, 72)
+ax.text(0.3, 60, r"$TC_{sr} = 12q + 8$", color=AZUL)
+ax.text(5.6, 52, r"$TC_{lr} = \frac{27}{2}q$", color=ROJO)
+ejes(ax, r"$q$", r"$TC$", 8, 108, [0, 2, 4, 16 / 3, 8], [0, 8, 36, 72, 108])
+ax.set_xticklabels(["0", "2", "4", r"$\frac{16}{3}$", "8"])
+plt.show()
+```
+
+### Returns to scale
+
+$$f(tL,\,tK) = \min\left\{\tfrac13 tL,\ \tfrac23 tK\right\} = t\,\min\left\{\tfrac13 L,\ \tfrac23 K\right\}$$
+
+Therefore:
+
+$$f(tL,\,tK) = t\,f(L,K)$$
+
+The technology exhibits constant returns to scale.

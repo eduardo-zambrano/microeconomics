@@ -1,0 +1,102 @@
+/*-- scss:defaults --*/
+
+// Muted sage green palette — elegant, warm, distinct from cosmo/blue
+$body-bg: #f4f8f4;
+$navbar-bg: #3a6b4c;
+$sidebar-bg: #eaf1ea;
+$link-color: #2e6b47;
+$link-hover-color: #1d4a30;
+
+// Subtle tonal shifts for depth
+$code-bg: #eef3ee;
+$card-bg: #ffffff;
+
+/*-- scss:rules --*/
+
+// Refined navbar
+.navbar {
+  border-bottom: 1px solid #c5d8c5;
+  box-shadow: 0 1px 3px rgba(58, 107, 76, 0.08);
+}
+
+// Sidebar styling
+.sidebar {
+  border-right: 1px solid #d4e2d4;
+}
+
+.sidebar .sidebar-item .sidebar-item-text {
+  color: #3a5a3a;
+}
+
+// Headings — dark forest green, clean
+h1, h2, h3, h4, h5, h6 {
+  color: #2a4a35;
+}
+
+// Callout refinements
+.callout {
+  border-radius: 4px;
+}
+
+.callout-note {
+  border-left-color: #5a9a6e !important;
+}
+
+.callout-tip {
+  border-left-color: #3a8a5c !important;
+}
+
+.callout-important {
+  border-left-color: #7a6a3a !important;
+}
+
+.callout-warning {
+  border-left-color: #8a6a3a !important;
+}
+
+// Tables — subtle green tint
+.table > thead {
+  background-color: #e2ede2;
+  color: #2a4a35;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: #f0f5f0;
+}
+
+// Title page refinement
+.quarto-title {
+  border-bottom: 2px solid #b5ccb5;
+  padding-bottom: 1.5rem;
+}
+
+.quarto-title .title {
+  color: #2a4a35;
+}
+
+.quarto-title .subtitle {
+  color: #4a7a5a;
+}
+
+// Download button
+.quarto-title-meta a.btn {
+  background-color: #3a6b4c;
+  border-color: #3a6b4c;
+  color: #ffffff;
+}
+
+.quarto-title-meta a.btn:hover {
+  background-color: #2d5a3e;
+  border-color: #2d5a3e;
+}
+
+// Footer
+.nav-footer {
+  border-top: 1px solid #c5d8c5;
+}
+
+// Figures never overflow the text column
+.quarto-figure img, .cell-output-display img {
+  max-width: 100%;
+  height: auto;
+}

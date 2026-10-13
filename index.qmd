@@ -1,0 +1,7 @@
+# Preamble {.unnumbered}
+
+These notes accompany the [Intermediate Microeconomics](https://cvnet.cpd.ua.es/Guia-Docente/GuiaDocente/Index?wlengua=en&wcodasi=22014&scaca=2026-27#) course at the [University of Alicante](https://www.ua.es/).
+
+Their purpose is to give you, worked out from start to finish, the calculations that come up again and again in the course. Each chapter takes concrete examples and develops them step by step, so that you can follow the mechanics with pencil and paper and check your own results.
+
+The notes focus on the *how*, not the *why*: the economic intuition and the interpretation of the results are covered in class and in the textbook. What you will find here are the computations.
