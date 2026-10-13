@@ -5,3 +5,9 @@ These notes accompany the [Intermediate Microeconomics](https://cvnet.cpd.ua.es/
 Their purpose is to give you, worked out from start to finish, the calculations that come up again and again in the course. Each chapter takes concrete examples and develops them step by step, so that you can follow the mechanics with pencil and paper and check your own results.
 
 The notes focus on the *how*, not the *why*: the economic intuition and the interpretation of the results are covered in class and in the textbook. What you will find here are the computations.
+
+## AI disclosure {.unnumbered}
+
+These notes were prepared with the assistance of Claude Code (version 2.1.296), Anthropic's coding agent, running the Claude Opus 5.5 model (`claude-opus-5-5`), in October 2026. Working under my direction, the AI drafted the text, carried out the derivations, wrote the code that draws the figures, and built this website. I chose the examples and the parameter values, specified the content and structure of each chapter, and reviewed the material.
+
+— Eduardo Zambrano
