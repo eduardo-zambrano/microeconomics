@@ -10,6 +10,8 @@ book:
   downloads: [pdf]
   chapters:
     - index.qmd
+    - consumer.qmd
+    - demand.qmd
     - costs.qmd
 
 execute:

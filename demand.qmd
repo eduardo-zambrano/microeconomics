@@ -1,0 +1,422 @@
+# Step by Step: Demand Functions, Substitution Effect and Income Effect
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+AZUL, ROJO, GRIS = "#1a5276", "#c0392b", "#555555"
+DOBLE, ANCHO = (8.6, 4.0), (7.6, 4.8)
+
+plt.rcParams.update({
+    "font.size": 13,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.linewidth": 1.1,
+    "lines.linewidth": 2.4,
+    "legend.frameon": False,
+    "mathtext.fontset": "cm",
+})
+
+def ejes(ax, xlabel, ylabel, xmax, ymax, xticks, yticks):
+    ax.set_xlim(0, xmax)
+    ax.set_ylim(0, ymax)
+    ax.set_xticks(xticks)
+    ax.set_yticks(yticks)
+    ax.set_xlabel(xlabel, loc="right")
+    ax.set_ylabel(ylabel, loc="top", rotation=0)
+
+def punto(ax, x, y):
+    ax.plot([x, x], [0, y], color=GRIS, lw=1, ls=":")
+    ax.plot([0, x], [y, y], color=GRIS, lw=1, ls=":")
+    ax.plot(x, y, "o", color="black", ms=8, zorder=5, clip_on=False)
+
+def corte(ax, y0, y1, color="black", lw=1.1):
+    # zigzag section of the vertical axis between y0 and y1 (broken axis)
+    w = 0.02 * ax.get_xlim()[1]
+    ax.plot([0, -w, w, -w, w, 0], np.linspace(y0, y1, 6), color=color, lw=lw,
+            clip_on=False, zorder=4, solid_joinstyle="miter")
+
+def efecto(ax, x1, x2, texto):
+    # arrow below the horizontal axis, between x1 and x2
+    t = ax.get_xaxis_transform()
+    ax.annotate("", xy=(x2, -0.19), xytext=(x1, -0.19), xycoords=t, textcoords=t,
+                arrowprops=dict(arrowstyle="<->", color=GRIS, lw=1.2), annotation_clip=False)
+    ax.text((x1 + x2) / 2, -0.22, texto, transform=t, ha="center", va="top", color=GRIS, fontsize=12)
+
+def descomposicion(xmax, ymax, xticks, yticks):
+    fig, ax = plt.subplots(figsize=ANCHO)
+    ejes(ax, r"$x$", r"$y$", xmax, ymax, xticks, yticks)
+    return fig, ax
+```
+
+## Setup
+
+A consumer chooses a bundle $(x, y)$ of two goods. Prices are $p_x$ and $p_y$ and income is $I$. The budget constraint is:
+
+$$p_x\,x + p_y\,y = I$$
+
+The demand function for each good is the optimal quantity of that good as a function of prices and income:
+
+$$x(p_x, p_y, I) \qquad\qquad y(p_x, p_y, I)$$
+
+Three preferences:
+
+$$u = x^{1/3}y^{2/3} \qquad\quad u = \tfrac13 x + \tfrac23 y \qquad\quad u = \min\left\{\tfrac13 x,\ \tfrac23 y\right\}$$
+
+## Demand functions. Cobb-Douglas: $u = x^{1/3}y^{2/3}$
+
+### Tangency condition
+
+Marginal utilities:
+
+$$MU_x = \tfrac13 x^{-2/3}y^{2/3} \qquad\qquad MU_y = \tfrac23 x^{1/3}y^{-1/3}$$
+
+Dividing:
+
+$$MRS = \frac{MU_x}{MU_y} = \frac{y}{2x}$$
+
+Setting equal to $p_x/p_y$:
+
+$$\frac{y}{2x} = \frac{p_x}{p_y} \;\;\Longrightarrow\;\; p_y\,y = 2\,p_x\,x$$
+
+### Demand functions
+
+Substituting $p_y\,y = 2\,p_x\,x$ into the budget constraint:
+
+$$p_x\,x + 2\,p_x\,x = I$$
+
+Solving:
+
+$$x(p_x, p_y, I) = \frac{I}{3\,p_x} \qquad\qquad y(p_x, p_y, I) = \frac{2I}{3\,p_y}$$
+
+### Demand curves
+
+With $I = 36$:
+
+$$x = \frac{36}{3\,p_x} = \frac{12}{p_x} \qquad\qquad y = \frac{2\cdot 36}{3\,p_y} = \frac{24}{p_y}$$
+
+```{python}
+#| fig-align: center
+fig, (a1, a2) = plt.subplots(1, 2, figsize=DOBLE)
+x = np.linspace(1.2, 60, 400)
+a1.plot(x, 12 / x, color=AZUL)
+punto(a1, 3, 4)
+a1.text(14, 2.0, r"$x = \frac{12}{p_x}$", color=AZUL)
+ejes(a1, r"$x$", r"$p_x$", 60, 8, [0, 3, 20, 40, 60], [0, 2, 4, 6, 8])
+y = np.linspace(2.5, 60, 400)
+a2.plot(y, 24 / y, color=AZUL)
+punto(a2, 24, 1)
+a2.text(14, 3.0, r"$y = \frac{24}{p_y}$", color=AZUL)
+ejes(a2, r"$y$", r"$p_y$", 60, 8, [0, 12, 24, 36, 48, 60], [0, 1, 2, 4, 6, 8])
+fig.tight_layout(w_pad=3)
+plt.show()
+```
+
+## Demand functions. Perfect substitutes: $u = \tfrac13 x + \tfrac23 y$
+
+### Comparing $MRS$ and $p_x/p_y$
+
+Marginal utilities:
+
+$$MU_x = \tfrac13 \qquad\qquad MU_y = \tfrac23$$
+
+Dividing:
+
+$$MRS = \frac{1/3}{2/3} = \frac12$$
+
+Comparing with $p_x/p_y$:
+
+$$\frac{p_x}{p_y} > \frac12 \;\;\Longrightarrow\;\; x = 0 \qquad\qquad \frac{p_x}{p_y} < \frac12 \;\;\Longrightarrow\;\; y = 0$$
+
+### Demand functions
+
+Substituting into the budget constraint:
+
+$$x(p_x, p_y, I) = \begin{cases} 0 & \tfrac{p_x}{p_y} > \tfrac12 \\[6pt] \dfrac{I}{p_x} & \tfrac{p_x}{p_y} < \tfrac12 \end{cases} \qquad\qquad y(p_x, p_y, I) = \begin{cases} \dfrac{I}{p_y} & \tfrac{p_x}{p_y} > \tfrac12 \\[6pt] 0 & \tfrac{p_x}{p_y} < \tfrac12 \end{cases}$$
+
+If $\tfrac{p_x}{p_y} = \tfrac12$, any bundle on the budget constraint is optimal.
+
+### Demand curves
+
+With $I = 36$ and $p_y = 1$:
+
+$$x = \begin{cases} 0 & p_x > \tfrac12 \\[6pt] \dfrac{36}{p_x} & p_x < \tfrac12 \end{cases}$$
+
+With $I = 36$ and $p_x = 4$:
+
+$$y = \begin{cases} \dfrac{36}{p_y} & p_y < 8 \\[6pt] 0 & p_y > 8 \end{cases}$$
+
+```{python}
+#| fig-align: center
+fig, (a1, a2) = plt.subplots(1, 2, figsize=DOBLE)
+# broken vertical axis: p_x from 0 to 1 at normal scale; p_x = 4 above the break
+P4, Z0, Z1, TOP = 1.4, 1.08, 1.2, 1.6
+ejes(a1, r"$x$", r"$p_x$", 160, TOP, [0, 72, 144], [0, 0.5, 1, P4])
+a1.set_yticklabels(["0", r"$\frac{1}{2}$", "1", "4"])
+a1.spines["left"].set_visible(False)
+a1.plot([0, 0], [0, 0.5], color="black", lw=1.1, clip_on=False, zorder=3)
+x = np.linspace(72, 160, 200)
+a1.plot([0, 0, 72], [Z0, 0.5, 0.5], color=AZUL, clip_on=False, zorder=4)
+corte(a1, Z0, Z1, color=AZUL, lw=2.4)
+a1.plot([0, 0], [Z1, TOP], color=AZUL, clip_on=False, zorder=4)
+a1.plot(x, 36 / x, color=AZUL)
+punto(a1, 0, P4)
+a1.text(8, 0.8, r"$x = 0$", color=AZUL)
+a1.text(108, 0.48, r"$x = \frac{36}{p_x}$", color=AZUL)
+y = np.linspace(4.5, 60, 300)
+a2.plot([0, 0, 4.5], [12, 8, 8], color=AZUL, clip_on=False, zorder=4)
+a2.plot(y, 36 / y, color=AZUL)
+punto(a2, 36, 1)
+a2.text(3, 10.2, r"$y = 0$", color=AZUL)
+a2.text(15, 3.8, r"$y = \frac{36}{p_y}$", color=AZUL)
+ejes(a2, r"$y$", r"$p_y$", 60, 12, [0, 12, 24, 36, 48, 60], [0, 1, 4, 8, 12])
+fig.tight_layout(w_pad=3)
+plt.show()
+```
+
+## Demand functions. Perfect complements: $u = \min\left\{\tfrac13 x,\ \tfrac23 y\right\}$
+
+### Fixed-proportions condition
+
+Without wasting either good:
+
+$$\tfrac13 x = \tfrac23 y \;\;\Longrightarrow\;\; x = 2y$$
+
+### Demand functions
+
+Substituting $x = 2y$ into the budget constraint:
+
+$$p_x\cdot 2y + p_y\,y = I$$
+
+Solving:
+
+$$y(p_x, p_y, I) = \frac{I}{2\,p_x + p_y} \qquad\qquad x(p_x, p_y, I) = \frac{2I}{2\,p_x + p_y}$$
+
+### Demand curves
+
+With $I = 36$ and $p_y = 1$:
+
+$$x = \frac{72}{2\,p_x + 1}$$
+
+With $I = 36$ and $p_x = 4$:
+
+$$y = \frac{36}{8 + p_y}$$
+
+```{python}
+#| fig-align: center
+fig, (a1, a2) = plt.subplots(1, 2, figsize=DOBLE)
+x = np.linspace(4, 72, 400)
+a1.plot(x, (72 / x - 1) / 2, color=AZUL)
+punto(a1, 8, 4)
+a1.text(26, 2.2, r"$x = \frac{72}{2p_x + 1}$", color=AZUL)
+ejes(a1, r"$x$", r"$p_x$", 80, 8, [0, 8, 24, 48, 72], [0, 2, 4, 6, 8])
+y = np.linspace(1.7, 4.5, 300)
+a2.plot(y, 36 / y - 8, color=AZUL)
+punto(a2, 4, 1)
+a2.text(0.3, 2.6, r"$y = \frac{36}{8 + p_y}$", color=AZUL)
+ejes(a2, r"$y$", r"$p_y$", 6, 12, [0, 1, 2, 3, 4, 5, 6], [0, 1, 4, 8, 12])
+fig.tight_layout(w_pad=3)
+plt.show()
+```
+
+## Change in the price of $x$
+
+The price of $x$ falls. Income and the price of $y$ do not change:
+
+$$p_x = 4 \;\longrightarrow\; p_x' = \tfrac14 \qquad\qquad p_y = 1 \qquad\qquad I = 36$$
+
+Three bundles:
+
+- $A$: optimal bundle at the initial price, with utility $U_1$.
+- $B$: optimal bundle at the final price, with utility $U_2$.
+- $A'$: optimal bundle at the final price that keeps the initial utility $U_1$.
+
+Three budget constraints: $BC_1$ (initial price), $BC_2$ (final price) and $BC'$ (parallel to $BC_2$, through $A'$).
+
+Effects on the quantity of $x$:
+
+$$SE = x_{A'} - x_A$$
+
+$$IE = x_B - x_{A'}$$
+
+$$TE = x_B - x_A = SE + IE$$
+
+## Substitution and income effects. Cobb-Douglas: $u = x^{1/3}y^{2/3}$
+
+### Initial bundle $A$
+
+Evaluating the demand functions at $p_x = 4$:
+
+$$x_A = \frac{36}{3\cdot 4} = 3 \qquad\qquad y_A = \frac{2\cdot 36}{3\cdot 1} = 24$$
+
+Initial utility:
+
+$$U_1 = 3^{1/3}\cdot 24^{2/3} = 12$$
+
+### Final bundle $B$
+
+Evaluating the demand functions at $p_x' = \tfrac14$:
+
+$$x_B = \frac{36}{3\cdot \tfrac14} = 48 \qquad\qquad y_B = \frac{2\cdot 36}{3\cdot 1} = 24$$
+
+### Compensated bundle $A'$
+
+Tangency of the indifference curve through $A$ with the final relative prices:
+
+$$\frac{y}{2x} = \frac{1/4}{1} \;\;\Longrightarrow\;\; y = \tfrac12 x$$
+
+Substituting into $x^{1/3}y^{2/3} = U_1 = 12$:
+
+$$x^{1/3}\left(\tfrac12 x\right)^{2/3} = 12 \;\;\Longrightarrow\;\; \frac{x}{2^{2/3}} = 12$$
+
+Solving:
+
+$$x_{A'} = 12\cdot 2^{2/3} \approx 19.05 \qquad\qquad y_{A'} = \tfrac12\, x_{A'} = 6\cdot 2^{2/3} \approx 9.52$$
+
+Income of $BC'$:
+
+$$\tfrac14\, x_{A'} + y_{A'} = 3\cdot 2^{2/3} + 6\cdot 2^{2/3} = 9\cdot 2^{2/3} \approx 14.29$$
+
+### Substitution effect and income effect
+
+$$SE = x_{A'} - x_A = 12\cdot 2^{2/3} - 3 \approx 16.05$$
+
+$$IE = x_B - x_{A'} = 48 - 12\cdot 2^{2/3} \approx 28.95$$
+
+$$TE = x_B - x_A = 48 - 3 = 45$$
+
+### Indifference curves and budget constraints
+
+```{python}
+#| fig-align: center
+fig, ax = descomposicion(150, 40, [3, 48, 144], [0, 12, 24, 36])
+k = 2 ** (2 / 3)
+x = np.linspace(0.5, 150, 600)
+ax.plot(x, 12**1.5 / np.sqrt(x), color=AZUL)
+ax.plot(x, 4 * 12**1.5 / np.sqrt(x), color=AZUL)
+ax.plot([0, 9], [36, 0], color=ROJO)
+ax.plot([0, 144], [36, 0], color=ROJO)
+ax.plot([0, 36 * k], [9 * k, 0], color=ROJO, ls="--", lw=1.8)
+punto(ax, 3, 24); punto(ax, 12 * k, 6 * k); punto(ax, 48, 24)
+ax.text(5, 25, r"$A$"); ax.text(21, 10.4, r"$A'$"); ax.text(50, 25, r"$B$")
+ax.text(84, 6.3, r"$U_1$", color=AZUL); ax.text(84, 20, r"$U_2$", color=AZUL)
+ax.text(10, 1.0, r"$BC_1$", color=ROJO); ax.text(59, 1.0, r"$BC'$", color=ROJO); ax.text(124, 6.6, r"$BC_2$", color=ROJO)
+efecto(ax, 3, 12 * k, "SE"); efecto(ax, 12 * k, 48, "IE")
+plt.show()
+```
+
+## Substitution and income effects. Perfect substitutes: $u = \tfrac13 x + \tfrac23 y$
+
+### Initial bundle $A$
+
+With $p_x = 4$:
+
+$$\frac{p_x}{p_y} = 4 > \frac12 \;\;\Longrightarrow\;\; x_A = 0 \qquad\qquad y_A = \frac{36}{1} = 36$$
+
+Initial utility:
+
+$$U_1 = \tfrac13\cdot 0 + \tfrac23\cdot 36 = 24$$
+
+### Final bundle $B$
+
+With $p_x' = \tfrac14$:
+
+$$\frac{p_x'}{p_y} = \frac14 < \frac12 \;\;\Longrightarrow\;\; x_B = \frac{36}{1/4} = 144 \qquad\qquad y_B = 0$$
+
+### Compensated bundle $A'$
+
+At the final price, $\tfrac{p_x'}{p_y} < \tfrac12$:
+
+$$y_{A'} = 0$$
+
+Substituting into $\tfrac13 x + \tfrac23 y = U_1 = 24$:
+
+$$\tfrac13\, x = 24 \;\;\Longrightarrow\;\; x_{A'} = 72$$
+
+Income of $BC'$:
+
+$$\tfrac14\cdot 72 + 0 = 18$$
+
+### Substitution effect and income effect
+
+$$SE = x_{A'} - x_A = 72 - 0 = 72$$
+
+$$IE = x_B - x_{A'} = 144 - 72 = 72$$
+
+$$TE = x_B - x_A = 144 - 0 = 144$$
+
+### Indifference curves and budget constraints
+
+```{python}
+#| fig-align: center
+fig, ax = descomposicion(160, 80, [0, 72, 144], [0, 18, 36, 72])
+ax.plot([0, 72], [36, 0], color=AZUL)
+ax.plot([0, 144], [72, 0], color=AZUL)
+ax.plot([0, 9], [36, 0], color=ROJO)
+ax.plot([0, 144], [36, 0], color=ROJO)
+ax.plot([0, 72], [18, 0], color=ROJO, ls="--", lw=1.8)
+punto(ax, 0, 36); punto(ax, 72, 0); punto(ax, 144, 0)
+ax.text(3, 39, r"$A$"); ax.text(74, 3, r"$A'$"); ax.text(146, 3, r"$B$")
+ax.text(40, 18.5, r"$U_1$", color=AZUL); ax.text(62, 44, r"$U_2$", color=AZUL)
+ax.text(10, 2.0, r"$BC_1$", color=ROJO); ax.text(22, 5.0, r"$BC'$", color=ROJO); ax.text(100, 14, r"$BC_2$", color=ROJO)
+efecto(ax, 0, 72, "SE"); efecto(ax, 72, 144, "IE")
+plt.show()
+```
+
+## Substitution and income effects. Perfect complements: $u = \min\left\{\tfrac13 x,\ \tfrac23 y\right\}$
+
+### Initial bundle $A$
+
+Evaluating the demand functions at $p_x = 4$:
+
+$$y_A = \frac{36}{2\cdot 4 + 1} = 4 \qquad\qquad x_A = \frac{2\cdot 36}{2\cdot 4 + 1} = 8$$
+
+Initial utility:
+
+$$U_1 = \min\left\{\tfrac13\cdot 8,\ \tfrac23\cdot 4\right\} = \tfrac83$$
+
+### Final bundle $B$
+
+Evaluating the demand functions at $p_x' = \tfrac14$:
+
+$$y_B = \frac{36}{2\cdot \tfrac14 + 1} = 24 \qquad\qquad x_B = \frac{2\cdot 36}{2\cdot \tfrac14 + 1} = 48$$
+
+### Compensated bundle $A'$
+
+Without wasting either good, with utility $U_1 = \tfrac83$:
+
+$$\tfrac13 x = \tfrac23 y = \tfrac83 \;\;\Longrightarrow\;\; x_{A'} = 8 \qquad y_{A'} = 4$$
+
+Therefore:
+
+$$A' = A$$
+
+Income of $BC'$:
+
+$$\tfrac14\cdot 8 + 4 = 6$$
+
+### Substitution effect and income effect
+
+$$SE = x_{A'} - x_A = 8 - 8 = 0$$
+
+$$IE = x_B - x_{A'} = 48 - 8 = 40$$
+
+$$TE = x_B - x_A = 48 - 8 = 40$$
+
+### Indifference curves and budget constraints
+
+```{python}
+#| fig-align: center
+fig, ax = descomposicion(150, 40, [0, 8, 48, 144], [0, 4, 24, 36])
+ax.plot([8, 8, 150], [40, 4, 4], color=AZUL)
+ax.plot([48, 48, 150], [40, 24, 24], color=AZUL)
+ax.plot([0, 9], [36, 0], color=ROJO)
+ax.plot([0, 144], [36, 0], color=ROJO)
+ax.plot([0, 24], [6, 0], color=ROJO, ls="--", lw=1.8)
+punto(ax, 8, 4); punto(ax, 48, 24)
+ax.text(10, 5.2, r"$A = A'$"); ax.text(50, 25.2, r"$B$")
+ax.text(136, 5.0, r"$U_1$", color=AZUL); ax.text(136, 25.0, r"$U_2$", color=AZUL)
+ax.text(10, 29, r"$BC_1$", color=ROJO); ax.text(25, 0.8, r"$BC'$", color=ROJO); ax.text(96, 13.5, r"$BC_2$", color=ROJO)
+efecto(ax, 8, 48, "TE = IE  (SE = 0)")
+plt.show()
+```
